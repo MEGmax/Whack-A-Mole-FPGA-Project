@@ -1,10 +1,9 @@
 # Whack-A-Mole-FPGA-Project
 The game whack a mole! Written for DE1 SoC FPGA to display on a VGA monitor for ECE243
 <img width="622" alt="Screenshot_2023-03-08_at_7 29 06_PM" src="https://user-images.githubusercontent.com/96932850/229607133-af9201d4-a7fd-4f2e-b598-d5f256251e33.png">
-<h1>Plan sent to Ta</h1>
 <h2>General Overview</h2>
 <li>Title screen, press any key to continue</li>
-<li>screen to choose modes (2 modes, chosen by keys)</li>
+<li>Screen to choose modes (2 modes, chosen by keys)</li>
 <li>Then screen to select a specific setting to each mode (#lives, or #time)</li>
 <li>Speed (duration of moles above ground) increased every 30 seconds automatically</li>
 <li>Transition animations between each screen</li>
