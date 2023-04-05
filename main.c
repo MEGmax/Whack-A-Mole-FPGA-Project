@@ -5,6 +5,8 @@
 #define ABS(x) (((x) > 0) ? (x) : -(x))
 #define BLACK 0x0000
 #define WHITE 0xFFFF
+#define BLUE 0x00FF
+#define RED 0xFF00
 
 uint8_t happyFaceImage[] = {
     0x00, 0x00, 0x01, 0x00, 0x01, 0x08, 0x00, 0x00, 0x01, 0x08, 0x00, 0x00, 0x41, 0x00, 0x21, 0x00, 0x40, 0x08, 0x00, 0x08, 0x00, 0x08, 0x41, 0x08, 0x20, 0x00, 0x40, 0x00, 0x01, 0x00, 0x01, 0x08, 0x00, 0x00, 0x21, 0x08, 0x00, 0x00, 0x00, 0x00, 
@@ -74,6 +76,7 @@ volatile int pixel_buffer_start; // global variable
 volatile int * pixel_ctrl_ptr = (int *)0xFF203020; //front buffer address
 volatile int * pixel_ctrl_ptr_back = (int *)0xFF20302C; //back buffer address
 volatile char * character_buffer = (char *) 0x09000000;
+volatile int * keyBufferr = (int *)0xFF200050; //back buffer address
 
 
 //function prototypes
@@ -86,6 +89,7 @@ void plot_pixel(int x, int y, short int colour);
 void swap(int* v1, int* v2);
 void write_text(int x, int y, char *text);
 void drawImage(int xPos, int yPos, int width, int height, uint8_t* image);
+void write_char(int, int, char);
 
 int modeSelScreen();
 void drawModeSelScreen();
@@ -101,9 +105,19 @@ void copyArray(uint8_t* src_array, uint8_t* dst_array);
 
 int main ()
 {
+    //clear_screen();
     /* Read location of the pixel buffer from the pixel buffer controller */
     pixel_buffer_start = *pixel_ctrl_ptr;
     displayStartScreen();
+    while (1)
+    {
+        if(*keyBufferr == 1)
+        {
+            clear_screen();
+            drawModeSelScreen();
+            break;
+        }
+    }
     drawImage(100, 120, 20, 20, happyFaceImage);
     return 0;
 }
@@ -133,11 +147,42 @@ int main ()
 // 	//we could make it so if a certain char on keyboard is pressed we end the game loop and display a photo of my ass?
 // }
 
+void drawModeSelScreen()
+{
+    //draw box for time mode
+    draw_line(40, 30, 40, 100, WHITE); //top left to bottom left
+    draw_line(40, 30, 280, 30, WHITE); //top left to top right
+    draw_line(280, 30, 280, 100, WHITE); //top right to bottom right
+    draw_line(40, 100, 280, 100, WHITE); //bottom left to bottom right
 
+    // //draw box for lives mode
+    draw_line(40, 120, 40, 190, WHITE); //top left to bottom left
+    draw_line(40, 120, 280, 120, WHITE); //top left to top right
+    draw_line(280, 120, 280, 190, WHITE); //top right to bottom right
+    draw_line(40, 190, 280, 190, WHITE); //bottom left to bottom right
+
+    //delay
+    int count = 0;
+    while(count < 10000000)
+    {
+        count++;
+    }
+
+    //set mode and draw accordingly
+    int modeType = modeSelScreen();
+    if(modeType == 1) 
+        setBackgroundColour(BLUE);
+    else if (modeType == 2)
+        setBackgroundColour(RED);
+    else
+        setBackgroundColour(WHITE);
+    
+}
 void displayStartScreen()
 {
     setBackgroundColour(BLACK);
     drawStartBox();
+
 }
 
 void drawStartBox()
@@ -153,7 +198,8 @@ void drawStartBox()
     draw_line(38, 212, 282, 212, WHITE); //bottom left to bottom right
 
     char* text = "PRESS ANY BUTTON TO START";
-    write_text(30, 30, text);
+    //write_text(30, 30, text);
+    write_char(30, 30, 'M');
 }
 //this function draws a line
 void draw_line(int x1, int y1, int x2, int y2, int hexColour)
@@ -266,9 +312,15 @@ void swap(int* v1, int* v2)
 	*v2 = temp;
 }
 
-
+void write_char(int x, int y, char c) 
+{
+  // VGA character buffer
+  volatile char * character_buffer = (char *) (0x09000000 + (y<<7) + x);
+  *character_buffer = c;
+}
 void write_text(int x, int y, char *text) 
 {
+    text = "hello";
     char currCharacter = *text;
     while(*text)
     {
@@ -288,26 +340,28 @@ void plot_pixel(int x, int y, short int colour)
 }
 
 
-// int modeSelScreen()
-// {
-// 	drawModeSelScreen();
-
-// 	int mode=0;
-// 	while(!mode)
-// 	{
-// 		volatile int *keyboardIn =(int *)0xff20050; //<---------change to wasd
-// 		if (*keyboardIn == 97) //97:a
-// 		{
-// 			int mode =1;
-// 		}
-// 		else if(*keyboardIn == 100 ) //100:d
-// 		{
-// 			int mode =2;
-// 		}
-// 	}
-
-// 	return mode;
-// }
+int modeSelScreen()
+{
+    int validInput = ((*(volatile int *)0xff200100) >> 15) & 0x1;
+	int mode=0;
+	while(!mode)
+	{
+		volatile int *keyboardIn =(int *)0xff200100; //<---------change to wasd
+        validInput = ((*(volatile int *)0xff200100) >> 15) & 0x1;
+        while (validInput)
+        {
+            if(((*(volatile int *)0xff200100) << 24) & 0x1 == 0x1D) //W inputed
+            {
+			    mode = 1;
+            }
+            if(((*(volatile int *)0xff200100) << 24) & 0x1 == 0x1B) //W inputed
+            {
+			    mode = 2;
+            }
+        }
+	}
+	return mode;
+}
 
 // int livesSelScreen()
 // {
@@ -372,7 +426,7 @@ void clear_screen()
 	{
 		for(int y = 0; y < 240; y++) //240 pixels tall
 		{
-			plot_pixel(x, y, 0x0000); //plot a black pixel on EVERY pixel on the screen
+			plot_pixel(x, y, BLACK); //plot a black pixel on EVERY pixel on the screen
 		}
 	}
 }
