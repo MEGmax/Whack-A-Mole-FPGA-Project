@@ -80,6 +80,7 @@ volatile int * keyBufferr = (int *)0xFF200050; //back buffer address
 
 
 //function prototypes
+void clear_screen();
 void displayStartScreen();
 void setBackgroundColour(short int colour);
 void drawMole(int xPos, int yPos);
@@ -90,6 +91,7 @@ void swap(int* v1, int* v2);
 void write_text(int x, int y, char *text);
 void drawImage(int xPos, int yPos, int width, int height, uint8_t* image);
 void write_char(int, int, char);
+void plot_pixel(int x, int y, short int colour);
 
 int modeSelScreen();
 void drawModeSelScreen();
@@ -184,6 +186,34 @@ void displayStartScreen()
     drawStartBox();
 
 }
+
+// while (!stop) {
+//         // keyboard code:
+//         PS2_data = (PS2_ptr);    // read the Data register in the PS/2 port
+//         RVALID = (PS2_data & 0x8000);    // extract the RVALID field
+//         if (RVALID != 0) {
+//             // always save the last three bytes received */
+//             byte1 = byte2;
+//             byte2 = byte3;
+//             byte3 = PS2_data & 0xFF;
+//         }
+
+//         if ( (byte2 == 0xAA) && (byte3 == 0x00) ) {
+//             // keyboard inserted; initialize sending of data
+//             *(PS2_ptr) = 0xF4;
+//         }
+
+
+//         // check for left or right keys
+//         if(byte3 == 107) {
+//             // left
+//             x_player--;
+//             dx_player = -1;
+//         } else if(byte3 == 116) {
+//             // right
+//             x_player++;
+//             dx_player = 1;
+//         }
 
 void drawStartBox()
 {
@@ -343,24 +373,58 @@ void plot_pixel(int x, int y, short int colour)
 int modeSelScreen()
 {
     int validInput = ((*(volatile int *)0xff200100) >> 15) & 0x1;
-	int mode=0;
-	while(!mode)
-	{
-		volatile int *keyboardIn =(int *)0xff200100; //<---------change to wasd
-        validInput = ((*(volatile int *)0xff200100) >> 15) & 0x1;
-        while (validInput)
+	int mode = 0;
+    unsigned char byte1 = 0;
+    unsigned char byte2 = 0;
+    unsigned char byte3 = 0;
+
+    volatile int * PS2_ptr = (int*)0xFF200100;
+    int PS2_data, RVALID;
+    while (!mode) 
+    {
+        // keyboard code:
+        PS2_data = *PS2_ptr;    // read the Data register in the PS/2 port
+        RVALID = PS2_data & 0x8000;    // extract the RVALID field
+        if (RVALID != 0) 
         {
-            if(((*(volatile int *)0xff200100) << 24) & 0x1 == 0x1D) //W inputed
-            {
-			    mode = 1;
-            }
-            if(((*(volatile int *)0xff200100) << 24) & 0x1 == 0x1B) //W inputed
-            {
-			    mode = 2;
-            }
+            // always save the last three bytes received
+            byte1 = byte2;
+            byte2 = byte3;
+            byte3 = PS2_data & 0xFF;
         }
-	}
+
+        if ( (byte2 == 0xAA) && (byte3 == 0x00) ) {
+            // keyboard inserted; initialize sending of data
+            *(PS2_ptr) = 0xF4;
+        }
+
+
+        // check for left or right keys
+        if(byte3 == 107) 
+        {
+            mode = 1;
+        } else if(byte3 == 116) 
+        {
+           mode = 2;
+        }
+	// while(!mode)
+	// {
+	// 	volatile int *keyboardIn =(int *)0xff200100; //<---------change to wasd
+    //     validInput = ((*(volatile int *)0xff200100) >> 15) & 0x1;
+    //     while (validInput)
+    //     {
+    //         if(((*(volatile int *)0xff200100) << 24) & 0x1 == 0x1D) //W inputed
+    //         {
+	// 		    mode = 1;
+    //         }
+    //         if(((*(volatile int *)0xff200100) << 24) & 0x1 == 0x1B) //W inputed
+    //         {
+	// 		    mode = 2;
+    //         }
+    //     }
+	// }
 	return mode;
+    }
 }
 
 // int livesSelScreen()
