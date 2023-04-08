@@ -475,30 +475,30 @@ void playLivesMode()
 
 
 }
-//was thinking something more on the speed of this below
-// void main()
-// {
-// 	while(1)
-// 	{
-// 		//startScreen();
+
+ void mainnnnnnnn()
+ {
+ 	while(1)
+ 	{
+         //displaying start screen, waits till user inputs keyboard press then itll continue to mode selection 
+ 		startScreen();
+        //mode selection will return the number mode the selected, either 1 or 2
+ 		int mode = modeSelScreen();
 		
-// 		int mode = modeSelScreen();
-		
-// 		int modeData;
-// 		if(mode==1)
-// 		{ modeData = livesSelScreen(); }
-// 		else if(mode==2)
-// 		{ modeData = timeSelScreen(); }
-// 		else
-// 		{
-// 			//send user to hell
-// 		}
-		
-// 		//gameplayScreen();
-// 		endGameScreen();
-// 	}
-// 	//we could make it so if a certain char on keyboard is pressed we end the game loop and display a photo of my ass?
-// }
+ 		int modeData;
+ 		if(mode==1)
+ 		{ modeData = livesSelScreen(); }
+ 		else if(mode==2)
+ 		{ modeData = timeSelScreen(); }
+ 		else
+ 		{
+ 			//send user to hell
+        }		
+ 		//gameplayScreen();
+ 		endGameScreen();
+ 	}
+ 	//we could make it so if a certain char on keyboard is pressed we end the game loop and display a photo of my ass?
+ }
 
 void drawModeSelScreen()
 {
@@ -525,11 +525,10 @@ void drawModeSelScreen()
         setBackgroundColour(WHITE);
     
 }
-void displayStartScreen()
-{
-    setBackgroundColour(BLACK);
-    drawStartBox();
-
+void startScreen()
+{ 
+    drawImage(0,0, 320, 240, uint8_t* image); //draw title screen
+    int keyboardOut = pollForKeyboardIn(); //keyboard in will return a valuse associated with each bttn,,, if it returns anything we will proceed, kout is unused
 }
 
 // while (!stop) {
@@ -843,3 +842,22 @@ void clear_screen()
 		}
 	}
 }
+
+
+int pollForKeyboardIn()
+ {
+ 	int input=-1;
+ 	volatile int *kbdPtr = (int*)0xFF200100;
+      int RVALID, KbdData;
+       
+ 	while(input==-1)
+ 	{
+ 		KbdData =*keybkbdPtroardIn;
+        RVALID= (KbdData & 0x8000);    // extract the RVALID field
+        if (RVALID != 0) 
+        {
+            input = KbdData & 0xFF; //extract keyboard input value 
+        }
+ 	}
+ 	return input; //passback input value
+ }
