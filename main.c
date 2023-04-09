@@ -352,6 +352,9 @@ volatile int * pixel_ctrl_ptr = (int *)0xFF203020; //front buffer address
 volatile int * pixel_ctrl_ptr_back = (int *)0xFF20302C; //back buffer address
 volatile char * character_buffer = (char *) 0x09000000;
 volatile int * keyBufferr = (int *)0xFF200050; //back buffer address
+volatile int * HEX3to0 = (int *)0xFF200020; //hex display address
+volatile int * A9Address = (int *)0xFFFEC600; //A9 private timer address
+uint8_t hexArray [] = {0b00111111, 0b00000110, 0b01011011, 0b01001111, 0b01100110, 0b01101101, 0b01111101, 0b00000111, 0b01111111, 0b01100111};
 
 
 //function prototypes
@@ -366,6 +369,8 @@ void write_text(int x, int y, char *text);
 void drawImage(int xPos, int yPos, int width, int height, uint8_t* image);
 void write_char(int, int, char);
 void plot_pixel(int x, int y, short int colour);
+void displayScore(int targetsHit);
+void delayWithTimer();
 
 int modeSelScreen();
 void drawModeSelScreen();
@@ -391,20 +396,61 @@ int main ()
         int mode = modeSelScreen();
  		int modeData;
  		if(mode==1)
- 		{ modeData = livesSelScreen(); }
- 		else if(mode==2)
- 		{ modeData = timeSelScreen(); }
- 		//else
- 		//{	send user to hell }
+ 		{
+            modeData = livesSelScreen(); 
+            playLivesMode();
+        }
 
-        //entering gameplay 
- 		gameplayScreen();
+ 		else if(mode==2)
+ 		{
+            modeData = timeSelScreen(); 
+            playTimedMode();
+        }
     }
     return 0;
 }
 
+void displayScore(int targetsHit)
+{
+    //printf("Targets: " + targetsHit);
+    if(targetsHit < 10)
+    {
+        *HEX3to0 = hexArray[targetsHit];
+    }
+    else if(targetsHit >= 10)
+    {
+        int ones = targetsHit%10;
+        targetsHit/=10;
+        uint16_t num = (hexArray[targetsHit]<<8) | hexArray[ones];
+        *HEX3to0 = num;
+        // *(HEX3to0) = hexArray[ones];
+        // *(HEX3to0) = hexArray[targetsHit];
+    }
+}
+
+
+void delayWithTimer()
+{
+    *A9Address = 50000000; //load the clock frequency
+    *(A9Address+2) = 0x5; //set E = 1, and I =1, this starts the clock and makes F=1 if the timer reaches 0;
+    
+    while (1)
+    {
+        if(*(A9Address+3) == 1) //check if F is 1 (F=1 when timer is done)
+        {
+            *(A9Address+3) = 1; //reset the F bit
+            return;
+        }
+    }
+}
+
+
+
 void playLivesMode()
 {
+    int active = 1;
+    int thingsHit = 0;
+    int numLives = 2;
     //set the game background
     drawImage(0, 0, 240, 320, playingBackground);
 
@@ -414,8 +460,49 @@ void playLivesMode()
 
     drawImage(10, 220, 30, 40, scoreText);
 
+    while(active)
+    {
+        if(numLives == 0)
+        {
+            active = 0;
+        }
+        if (*keyBufferr == 1)
+        {
+            thingsHit++;
+            displayScore(thingsHit);
+            delayWithTimer();
+        }
+    }
+    displayEndScreen();
+}
 
+void playTimedMode()
+{
+    int active = 1;
+    int thingsHit = 0;
+    int numLives = 2;
+    //set the game background
+    drawImage(0, 0, 240, 320, playingBackground);
 
+    drawImage(10, 10, 28, 30, heart);
+    drawImage(10, 45, 28, 30, heart);
+    drawImage(10, 80, 28, 30, heart);
+
+    drawImage(10, 220, 30, 40, scoreText);
+    while(active)
+    {
+        if(numLives == 0)
+        {
+            active = 0;
+        }
+        if (*keyBufferr == 1)
+        {
+            thingsHit++;
+            displayScore(thingsHit);
+            delayWithTimer();
+        }
+    }
+    displayEndScreen();
 }
 
 void setBackgroundColour(short int colour)
