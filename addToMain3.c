@@ -1,7 +1,7 @@
-volatile int * timer = (int *)0xFFC08000; //timer top
-  int time =timeSelScreen();
-  *timer = time*30*100000000; 
-  counter=*(timer +0x04)/100000000;
+#define timer ((volatile long *) 0xFFFEC600 )
+  int time =timeSelScreen(); // put in main
+   *timer = time*30*200000000;  //put right before gaemplayScreen(), this starts the timer, 
+  counter=*(timer + 1 )/200000000; // this is the value of our timer in seconds, we need to put this into the hex , then we need to display that updated hex very once in a while in our gameplayScreen
 
 
 
