@@ -6,8 +6,9 @@
 
 
 volatile int * HEX5to4 = (int *)0xFF200030; //hex display address
-void displayTime(int sec)
+void displayTime()
 {
+    int sec=*(timer + 1 )/200000000;
     int hundreds =sec/100;
     int tens =(sec%100)/10;
     int ones =sec/100;
