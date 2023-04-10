@@ -896,9 +896,20 @@ int timeSelScreen()
 {
     drawImage(0,0,240,320,playingBackground); //drawing the time selction screen 
     waitForEnter();
-    //int time=getNumOnes(*switchIn);
-    return 60;
+    int bitsOfUp = *switchAddress;
+    int numTime = 0;
+    while(bitsOfUp != 0)
+    {
+        if(bitsOfUp & 0b1 == 1)
+        {
+            numTime= numTime+1;
+        }
+        bitsOfUp = bitsOfUp >> 1;
+    }
+    return numTime;
 }
+
+
 
 void gameplayScreen()
 {
