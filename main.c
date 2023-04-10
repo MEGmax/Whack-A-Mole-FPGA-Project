@@ -603,6 +603,7 @@ volatile int * pixel_ctrl_ptr_back = (int *)0xFF20302C; //back buffer address
 volatile char * character_buffer = (char *) 0x09000000;
 volatile int * keyBufferr = (int *)0xFF200050; //back buffer address
 volatile int * HEX3to0 = (int *)0xFF200020; //hex display address
+volatile int * HEX5to4 = (int *)0xFF200030; //hex display address
 volatile int * A9Address = (int *)0xFFFEC600; //A9 private timer address
 volatile int * LEDAdress = (int *)0xFF200000; //LED address
 volatile int *switchAddress =(int *)0xFF200040; //SW0-9 address
@@ -684,6 +685,17 @@ void displayScore(int targetsHit)
         // *(HEX3to0) = hexArray[targetsHit];
     }
 }
+volatile int * HEX5to4 = (int *)0xFF200030; //hex display address
+void displayTime(int sec)
+{
+    int hundreds =sec/100;
+    int tens =(sec%100)/10;
+    int ones =sec/100;
+      *HEX5to4 = hexArray[hundreds]<<8|hexArray[tens];
+      *HEX3to0 = hexArray[ones]<<24|*(HEX3to0);
+
+}
+
 
 
 void delayWithTimer()

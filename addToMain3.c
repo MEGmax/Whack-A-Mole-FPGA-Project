@@ -5,6 +5,16 @@
 
 
 
+volatile int * HEX5to4 = (int *)0xFF200030; //hex display address
+void displayTime(int sec)
+{
+    int hundreds =sec/100;
+    int tens =(sec%100)/10;
+    int ones =sec/100;
+      *HEX5to4 = hexArray[hundreds]<<8|hexArray[tens];
+      *HEX3to0 = hexArray[ones]<<24|*(HEX3to0);
+
+}
 
 
 
