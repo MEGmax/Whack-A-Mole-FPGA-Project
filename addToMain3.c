@@ -13,8 +13,7 @@ void displayTime()
     int tens =(sec%100)/10;
     int ones =sec/100;
       *HEX5to4 = hexArray[hundreds]<<8|hexArray[tens];
-      *HEX3to0 = hexArray[ones]<<24|*(HEX3to0);
-
+      *HEX3to0 = hexArray[ones]<<24|hexArray[ones]<<16|*(HEX3to0);
 }
 
 
