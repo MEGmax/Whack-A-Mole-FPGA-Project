@@ -1,6 +1,5 @@
 # Whack-A-Mole-FPGA-Project
 The game whack a mole! Written for DE1 SoC FPGA to display on a VGA monitor for ECE243
-<img width="622" alt="Screenshot_2023-03-08_at_7 29 06_PM" src="https://user-images.githubusercontent.com/96932850/229607133-af9201d4-a7fd-4f2e-b598-d5f256251e33.png">
 <h2>General Overview</h2>
 <li>Title screen, press any key to continue</li>
 <li>Screen to choose modes (2 modes, chosen by keys)</li>
@@ -11,10 +10,19 @@ The game whack a mole! Written for DE1 SoC FPGA to display on a VGA monitor for 
 <h2>Overview of screens</h2>
 <ol>
     <li> Title </li>
+    <img width="622" alt="Title Screen" src="https://github.com/MEGmax/Whack-A-Mole-FPGA-Project/blob/2189b9fb10fc59c9073af1b4da6bcbaeccddd076/gameplay%20Images/startScreenGC.png">
     <li> Mode selection </li>
-    <li> Lives/time selection for chosen mode</li>
+    <img width="622" alt="Mode Selection Screen" src="https://github.com/MEGmax/Whack-A-Mole-FPGA-Project/blob/b33ad4df3c8d127ce62a0707b48eb54526c5bdae/gameplay%20Images/modeSelScreen.png">
+    <li> Lives Selection Menu</li>
+    <img width="622" alt="Options Screen" src="https://github.com/MEGmax/Whack-A-Mole-FPGA-Project/blob/b33ad4df3c8d127ce62a0707b48eb54526c5bdae/gameplay%20Images/livesSelModeImg.png">
+    <li> Time Selection Menu</li>
+    <img width="622" alt="Options Screen 2" src="https://github.com/MEGmax/Whack-A-Mole-FPGA-Project/blob/b33ad4df3c8d127ce62a0707b48eb54526c5bdae/gameplay%20Images/timeSelScreen.png">
     <li> Gameplay till loss</li>
-    <li> End screen, press any key to adv (to #2)</li>
+    <img width="622" alt="Gameplay Screen" src="https://github.com/MEGmax/Whack-A-Mole-FPGA-Project/blob/b33ad4df3c8d127ce62a0707b48eb54526c5bdae/gameplay%20Images/gameplay.png">
+    <li> Game Over Screen</li>
+    <img width="622" alt="Game Over Screen" src="https://github.com/MEGmax/Whack-A-Mole-FPGA-Project/blob/b33ad4df3c8d127ce62a0707b48eb54526c5bdae/gameplay%20Images/endScreen.png">
+    <li> (Bonus) Credits Screen</li>
+    <img width="622" alt="Credits" src="https://github.com/MEGmax/Whack-A-Mole-FPGA-Project/blob/b33ad4df3c8d127ce62a0707b48eb54526c5bdae/gameplay%20Images/creditsStatic.png">
 </ol>
 <h2>Modes</h2>
 <h4>Mode 1: Survival</h4>
