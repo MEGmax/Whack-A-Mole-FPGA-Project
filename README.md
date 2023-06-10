@@ -13,7 +13,7 @@ This is a virtual Whack-A-Mole game played with a keyboard and peripherals such 
 <ul>
     <li>Virutal Environment Link: https://cpulator.01xz.net/?sys=arm-de1soc</li>
 </ul>
-<li>Built for DE1SoC board which is equipped with an FPGA and ARM Cortex-A9 processor, offering a versatile platform for developing C -based games and exploring software-hardware co-design possibilities</li>
+<li>Built for DE1SoC board which is equipped with an FPGA and ARM Cortex-A9 processor, offering a versatile platform for developing C-based games and exploring software-hardware co-design possibilities</li>
 <ul>
     <li>Board Details: https://www.terasic.com.tw/cgi-bin/page/archive.pl?Language=English&No=836</li>
     <li>Documentation Consulted: https://www.terasic.com.tw/cgi-bin/page/archive_download.pl?Language=English&No=836&FID=3a3708b0790bb9c721f94909c5ac96d6</li>
